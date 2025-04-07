@@ -4,8 +4,9 @@
   "description": "a proxy server api",
   "main": "app.js",
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^1.8.4",
     "cors": "^2.8.5",
+    "crytpo-js": "^0.0.1-security",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
