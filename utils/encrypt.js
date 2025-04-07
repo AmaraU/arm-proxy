@@ -1,10 +1,11 @@
-import CryptoJS  from "crypto-js";
+// import CryptoJS  from "crypto-js";
+const CryptoJS = require("crypto-js");
 
 
 const AES_KEY_FOR_DETAILS_REQUEST = "ZpJFemkqxFmkyvEZW/8xSA==";
 // const HMAC_AND_AES_KEY_FOR_ENC_REQUEST = "lM97ez5aC0taf/qj5VLCIQ==";
 
-export const encryptRequest = async (data) => {
+const encryptRequest = async (data) => {
   try {
     const iv = CryptoJS.enc.Utf8.parse("\0".repeat(16)); // 16-byte zero initia>
     const cryptoKey = CryptoJS.enc.Utf8.parse(AES_KEY_FOR_DETAILS_REQUEST);
@@ -27,4 +28,4 @@ export const encryptRequest = async (data) => {
   }
 };
 
-
+module.exports = { encryptRequest };

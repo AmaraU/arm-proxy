@@ -1,12 +1,17 @@
-import axios from "axios";
-import https from "https";
-import fetch from "node-fetch";
-import { encryptRequest } from "../utils/encrypt.js";
+const axios = require("axios");
+const fetch = require("node-fetch");
+const https = require("https");
+
+// import axios from "axios";
+// import https from "https";
+// import fetch from "node-fetch";
+// import { encryptRequest } from "../utils/encrypt.js";
+const { encryptRequest } = require("../utils/encrypt.js");
 
 //const APIURL = "https://154.113.32.47/FinedgeApi/api";
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-const APIURL = "https://apitest.armmfb.com.ng/FinedgeApi/api";
-// const APIURL = "https://apim.armmfb.com.ng/FinedgeApi/api";
+//const APIURL = "https://apitest.armmfb.com.ng/FinedgeApi/api"; // in dev http>
+const APIURL = "https://apim.armmfb.com.ng/FinedgeApi/api";
 
 const controller = {
   async get(req, res) {
@@ -183,7 +188,8 @@ const controller = {
   },
 };
 
-export default controller;
+module.exports = controller;
+// export default controller;
 
 
 // const axios = require("axios");
