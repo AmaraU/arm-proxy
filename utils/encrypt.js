@@ -7,7 +7,7 @@ const AES_KEY_FOR_DETAILS_REQUEST = "ZpJFemkqxFmkyvEZW/8xSA==";
 
 const encryptRequest = async (data) => {
   try {
-    const iv = CryptoJS.enc.Utf8.parse("\0".repeat(16)); // 16-byte zero initia>
+    const iv = CryptoJS.enc.Utf8.parse("\0".repeat(16));
     const cryptoKey = CryptoJS.enc.Utf8.parse(AES_KEY_FOR_DETAILS_REQUEST);
 
     // Convert data to JSON string
