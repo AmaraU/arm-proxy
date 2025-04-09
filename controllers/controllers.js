@@ -4,16 +4,13 @@ const https = require("https");
 const { encryptRequest } = require("../utils/encrypt.js");
 
 
-//const APIURL = "https://154.113.32.47/FinedgeApi/api";
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 const APIURL = "https://apitest.armmfb.com.ng/FinedgeApi/api";
-// const APIURL = "https://apim.armmfb.com.ng/FinedgeApi/api";
 
 
 const controller = {
   async get(req, res) {
     try {
-      //check if the encryption part has space
       const response = await axios({
         method: "GET",
         url: `${APIURL}${req.query.url}`,
