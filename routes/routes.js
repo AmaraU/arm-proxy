@@ -6,14 +6,6 @@ const outboundcontrollers = require("../controllers/outboundcontrollers");
 const smilecontrollers = require("../controllers/smilecontrollers");
 const router = Router();
 
-// import { Router } from "express";
-// import controllers from "../controllers/controllers.js";
-// import kyccontrollers from "../controllers/kyccontrollers.js";
-// import coralcontrollers from "../controllers/coralcontrollers.js";
-// import outboundcontrollers from "../controllers/outboundcontrollers.js";
-// import smilecontrollers from "../controllers/smilecontrollers.js";
-// const router = Router();
-
 router.get("/api/get", controllers.get);
 router.get("/api/encget", controllers.encget);
 router.post("/api/encpost", controllers.encpost);
@@ -47,5 +39,4 @@ router.post("/smileid/post", smilecontrollers.post);
 router.post("/smileid/upload", smilecontrollers.upload);
 router.delete("/smileid/delete", smilecontrollers.delete);
 
-// export default router;
 module.exports = router;
