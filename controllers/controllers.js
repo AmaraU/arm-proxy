@@ -188,6 +188,7 @@ const controller = {
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
 
+      const encryptedData = await encryptRequest(req.body);
       const response = await axios({
         method: "DELETE",
         url: `${APIURL}${path}?${query}`,
@@ -197,7 +198,7 @@ const controller = {
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: req.body,
+        data: encryptedData,
         httpsAgent,
       });
       res.status(200).json(response.data);
