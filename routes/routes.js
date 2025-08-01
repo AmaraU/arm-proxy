@@ -12,6 +12,7 @@ router.post("/api/encpost", controllers.encpost);
 router.post("/api/login", controllers.login);
 router.post("/api/post", controllers.post);
 router.put("/api/put", controllers.put);
+router.put("/api/encput", controllers.encput);
 router.post("/api/upload", controllers.upload);
 router.delete("/api/delete", controllers.delete);
 router.delete("/api/encdelete", controllers.encdelete);
