@@ -28,4 +28,23 @@ const encryptRequest = async (data) => {
   }
 };
 
-module.exports = { encryptRequest };
+function buildFullQueryUrl(input) {
+  const { url } = input;
+  const [baseUrl, existingQuery] = url.split('?');
+  const queryParams = new URLSearchParams(existingQuery || '');
+
+  const dynamicParams = { ...input };
+  delete dynamicParams.url;
+
+  for (const key in dynamicParams) {
+    if (dynamicParams[key] != null) {
+      queryParams.set(key, String(dynamicParams[key]));
+    }
+  }
+
+  const finalQueryString = queryParams.toString();
+  return finalQueryString ? `${baseUrl}?${finalQueryString}` : baseUrl;
+}
+
+
+module.exports = { encryptRequest, buildFullQueryUrl };

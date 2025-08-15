@@ -1,7 +1,8 @@
+
 const axios = require("axios");
 const fetch = require("node-fetch");
 const https = require("https");
-const { encryptRequest } = require("../utils/encrypt.js");
+const { encryptRequest, buildFullQueryUrl, } = require("../utils/encrypt.js");
 
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
@@ -32,10 +33,11 @@ const controller = {
       //check if the encryption part has space
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-
+      const unecryptedUrl = buildFullQueryUrl(req.query)
       const response = await axios({
         method: "GET",
-        url: `${APIURL}${path}?${query}`,
+        // url: `${APIURL}${path}?${query}`,
+        url: `${APIURL}${unecryptedUrl}`,
         headers: {
           ContentType: "application/json",
           Authorization: req.headers.authorization || "",
@@ -70,7 +72,6 @@ const controller = {
 
   async post(req, res) {
     try {
-      const encryptedData = await encryptRequest(req.body);
       const response = await axios({
         method: "POST",
         url: `${APIURL}${req.query.url}`,
@@ -80,8 +81,8 @@ const controller = {
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: encryptedData,
-        transformRequest: [(data) => data],
+        data: req.body,
+        // transformRequest: [(data) => data],
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -94,19 +95,20 @@ const controller = {
     try {
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
+      const unecryptedUrl = buildFullQueryUrl(req.query)
 
-      const encryptedData = await encryptRequest(req.body);
       const response = await axios({
         method: "POST",
-        url: `${APIURL}${path}?${query}`,
+        // url: `${APIURL}${path}?${query}`,
+        url: `${APIURL}${unecryptedUrl}`,
         maxBodyLength: Infinity,
         headers: {
           "Content-Type": "application/json",
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: encryptedData,
-        transformRequest: [(data) => data],
+        data: req.body,
+        // transformRequest: [(data) => data],
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -117,7 +119,6 @@ const controller = {
 
   async put(req, res) {
     try {
-      const encryptedData = await encryptRequest(req.body);
       const response = await axios({
         method: "PUT",
         url: `${APIURL}${req.query.url}`,
@@ -127,8 +128,9 @@ const controller = {
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: encryptedData,
-        transformRequest: [(data) => data],
+        data: req.body,
+        // transformRequest: [(data) => data],
+
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -137,22 +139,25 @@ const controller = {
     }
   },
 
-   async encput(req, res) {
+  async encput(req, res) {
     try {
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-      const encryptedData = await encryptRequest(req.body);
+      const unecryptedUrl = buildFullQueryUrl(req.query)
+
       const response = await axios({
         method: "PUT",
-        url: `${APIURL}${path}?${query}`,
+        // url: `${APIURL}${path}?${query}`,
+        url: `${APIURL}${unecryptedUrl}`,
         maxBodyLength: Infinity,
         headers: {
           "Content-Type": "application/json",
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: encryptedData,
-        transformRequest: [(data) => data],
+        data: req.body,
+        // transformRequest: [(data) => data],
+
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -169,7 +174,7 @@ const controller = {
 
       const formdata = new FormData();
       formdata.append("file", req.body, "[PROXY]");
-      
+
       const requestOptions = {
         method: "POST",
         headers: myHeaders,
@@ -210,17 +215,18 @@ const controller = {
 
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
+      const unecryptedUrl = buildFullQueryUrl(req.query)
 
-      const encryptedData = await encryptRequest(req.body);
       const response = await axios({
         method: "DELETE",
-        url: `${APIURL}${path}?${query}`,
+        url: `${APIURL}${unecryptedUrl}`,
+        // url: `${APIURL}${path}?${query}`,
         headers: {
           "Content-Type": req.headers["content-type"],
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: encryptedData,
+        data: req.body,
         httpsAgent,
       });
       res.status(200).json(response.data);
