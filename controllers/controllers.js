@@ -1,8 +1,6 @@
-
 const axios = require("axios");
 const fetch = require("node-fetch");
 const https = require("https");
-const { encryptRequest, buildFullQueryUrl, } = require("../utils/encrypt.js");
 
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
@@ -33,11 +31,10 @@ const controller = {
       //check if the encryption part has space
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-      const unecryptedUrl = buildFullQueryUrl(req.query)
+
       const response = await axios({
         method: "GET",
-        // url: `${APIURL}${path}?${query}`,
-        url: `${APIURL}${unecryptedUrl}`,
+        url: `${APIURL}${path}?${query}`,
         headers: {
           ContentType: "application/json",
           Authorization: req.headers.authorization || "",
@@ -81,8 +78,8 @@ const controller = {
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: req.body,
-        // transformRequest: [(data) => data],
+        data: req.body.data,
+        transformRequest: [(data) => data],
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -95,20 +92,18 @@ const controller = {
     try {
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-      const unecryptedUrl = buildFullQueryUrl(req.query)
 
       const response = await axios({
         method: "POST",
-        // url: `${APIURL}${path}?${query}`,
-        url: `${APIURL}${unecryptedUrl}`,
+        url: `${APIURL}${path}?${query}`,
         maxBodyLength: Infinity,
         headers: {
           "Content-Type": "application/json",
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: req.body,
-        // transformRequest: [(data) => data],
+        data: req.body.data,
+        transformRequest: [(data) => data],
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -128,9 +123,8 @@ const controller = {
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: req.body,
-        // transformRequest: [(data) => data],
-
+        data: req.body.data,
+        transformRequest: [(data) => data],
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -143,21 +137,17 @@ const controller = {
     try {
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-      const unecryptedUrl = buildFullQueryUrl(req.query)
-
       const response = await axios({
         method: "PUT",
-        // url: `${APIURL}${path}?${query}`,
-        url: `${APIURL}${unecryptedUrl}`,
+        url: `${APIURL}${path}?${query}`,
         maxBodyLength: Infinity,
         headers: {
           "Content-Type": "application/json",
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: req.body,
-        // transformRequest: [(data) => data],
-
+        data: req.body.data,
+        transformRequest: [(data) => data],
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -201,7 +191,7 @@ const controller = {
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: req.body,
+        data: req.body.data,
         httpsAgent,
       });
       res.status(200).json(response.data);
@@ -215,18 +205,16 @@ const controller = {
 
       const path = req.query.url.split("?")[0];
       const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-      const unecryptedUrl = buildFullQueryUrl(req.query)
 
       const response = await axios({
         method: "DELETE",
-        url: `${APIURL}${unecryptedUrl}`,
-        // url: `${APIURL}${path}?${query}`,
+        url: `${APIURL}${path}?${query}`,
         headers: {
           "Content-Type": req.headers["content-type"],
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: req.body,
+        data: req.body.data,
         httpsAgent,
       });
       res.status(200).json(response.data);
