@@ -26,6 +26,7 @@ router.delete("/kyc/delete", kyccontrollers.delete);
 router.get("/coral/get", coralcontrollers.get);
 router.post("/coral/login", coralcontrollers.login);
 router.post("/coral/post", coralcontrollers.post);
+router.post("/coral/encpost", coralcontrollers.encpost);
 router.post("/coral/upload", coralcontrollers.upload);
 router.delete("/coral/delete", coralcontrollers.delete);
 
