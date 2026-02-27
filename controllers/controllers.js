@@ -4,7 +4,8 @@ const https = require("https");
 
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-const APIURL = "https://apim.armmfb.com.ng/FinedgeApi/api";
+// const APIURL = "https://apim.armmfb.com.ng/FinedgeApi/api";
+const APIURL = "https://apitest.armmfb.com.ng/FinedgeApi/api";
 
 
 const controller = {
