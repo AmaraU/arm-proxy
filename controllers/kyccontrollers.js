@@ -146,7 +146,7 @@ const kyccontroller = {
 
       const formdata = new FormData();
       formdata.append("file", req.body, "[PROXY]");
-      
+
       const requestOptions = {
         method: "POST",
         headers: myHeaders,

@@ -71,7 +71,6 @@ const coralcontroller = {
 
   async post(req, res) {
     try {
-      const encryptedData = await encryptRequest(req.body);
       const response = await axios({
         method: "POST",
         url: `${APIURL}${req.query.url}`,
@@ -81,8 +80,7 @@ const coralcontroller = {
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: req.body,
-        // data: encryptedData,
+        data: JSON.stringify(req.body),
         transformRequest: [(data) => data],
         httpsAgent,
       });
