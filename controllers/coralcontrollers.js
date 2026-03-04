@@ -81,7 +81,8 @@ const coralcontroller = {
           Authorization: req.headers.authorization || "",
           "X-ARM-Api-Key-P": process.env.API_KEY,
         },
-        data: encryptedData,
+        data: req.body,
+        // data: encryptedData,
         transformRequest: [(data) => data],
         httpsAgent,
       });
@@ -146,7 +147,7 @@ const coralcontroller = {
 
       const formdata = new FormData();
       formdata.append("file", req.body, "[PROXY]");
-      
+
       const requestOptions = {
         method: "POST",
         headers: myHeaders,
