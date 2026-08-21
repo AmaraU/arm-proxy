@@ -2,7 +2,7 @@ const axios = require("axios");
 const fetch = require("node-fetch");
 const https = require("https");
 
-const APIURL = "https://stag-api.arm.com.ng/mfb-validation-service/api";
+const APIURL = process.env.SMILE_APIURL;
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,

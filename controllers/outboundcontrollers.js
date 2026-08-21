@@ -2,7 +2,7 @@ const axios = require("axios");
 const fetch = require("node-fetch");
 const https = require("https");
 
-const APIURL = "https://apitest.armmfb.com.ng/Outbound";
+const APIURL = process.env.OUTBOUND_APIURL;
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,

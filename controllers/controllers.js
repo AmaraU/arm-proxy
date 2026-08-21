@@ -1,27 +1,26 @@
 const axios = require("axios");
 const fetch = require("node-fetch");
 const https = require("https");
+const { postEncrypted, putEncrypted, getPlain, getEncryptedQuery, deleteEncrypted } = require("../utils/e2e/e2eClient");
+const { decryptResponse, encryptRequest } = require("../utils/encrypt");
 
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-// const APIURL = "https://apim.armmfb.com.ng/FinedgeApi/api";
-const APIURL = "https://apitest.armmfb.com.ng/FinedgeApi/api";
+const APIURL = process.env.BASE_APIURL;
 
 
 const controller = {
   async get(req, res) {
     try {
-      const response = await axios({
-        method: "GET",
-        url: `${APIURL}${req.query.url}`,
-        headers: {
-          ContentType: "application/json",
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        httpsAgent,
+      const response = await getPlain({
+        apiBaseUrl: APIURL,
+        path: `api${req.query.url}`,
+        bearerToken: req.headers.authorization || undefined,
+        tenantHeader: process.env.API_KEY,
       });
-      res.status(200).json(response.data);
+      const encryptedResponse = await encryptRequest(response.data);
+      console.log(response);
+      res.status(200).json(encryptedResponse);
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
@@ -29,85 +28,53 @@ const controller = {
 
   async encget(req, res) {
     try {
-      //check if the encryption part has space
-      const path = req.query.url.split("?")[0];
-      const query = req.query.url.split("?")[1].replaceAll(" ", "+");
+      const decrypted = await decryptResponse(req.query.data);
 
-      const response = await axios({
-        method: "GET",
-        url: `${APIURL}${path}?${query}`,
-        headers: {
-          ContentType: "application/json",
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        httpsAgent,
+      const response = await getEncryptedQuery({
+        apiBaseUrl: APIURL,
+        path: `api${req.query.url}`,
+        bearerToken: req.headers.authorization || undefined,
+        tenantHeader: process.env.API_KEY,
+        body: decrypted,
       });
-      res.status(200).json(response.data);
-    } catch (error) {
-      res.status(400).json(error.response?.data);
-    }
-  },
+      const encryptedResponse = await encryptRequest(response.data);
+      console.log(response);
+      res.status(200).json(encryptedResponse);
 
-  async login(req, res) {
-    try {
-      const response = await axios({
-        method: "POST",
-        url: `${APIURL}${req.query.url}`,
-        headers: {
-          ContentType: req.headers["content-type"],
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: req.body,
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
+
+      // //check if the encryption part has space
+      // const path = req.query.url.split("?")[0];
+      // const query = req.query.url.split("?")[1].replaceAll(" ", "+");
+
+      // const response = await axios({
+      //   method: "GET",
+      //   url: `${APIURL}${path}?${query}`,
+      //   headers: {
+      //     ContentType: "application/json",
+      //     Authorization: req.headers.authorization || "",
+      //     "X-ARM-Api-Key-P": process.env.API_KEY,
+      //   },
+      //   httpsAgent,
+      // });
     } catch (error) {
-      console.error(error);
       res.status(400).json(error.response?.data);
     }
   },
 
   async post(req, res) {
     try {
-      const response = await axios({
-        method: "POST",
-        url: `${APIURL}${req.query.url}`,
-        maxBodyLength: Infinity,
-        headers: {
-          "Content-Type": req.headers["content-type"],
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: req.body.data,
-        transformRequest: [(data) => data],
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
-    } catch (error) {
-      res.status(400).json(error.response?.data);
-    }
-  },
+      const decrypted = await decryptResponse(req.body.data);
 
-  async encpost(req, res) {
-    try {
-      const path = req.query.url.split("?")[0];
-      const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-
-      const response = await axios({
-        method: "POST",
-        url: `${APIURL}${path}?${query}`,
-        maxBodyLength: Infinity,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: req.body.data,
-        transformRequest: [(data) => data],
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
+      const response = await postEncrypted({
+        apiBaseUrl: APIURL,
+        path: `api${req.query.url}`,
+        bearerToken: req.headers.authorization || undefined,
+        tenantHeader:  process.env.API_KEY,
+        body: decrypted,
+      })
+      const encryptedResponse = await encryptRequest(response.data)
+      console.log(response.data)
+      res.status(200).json(encryptedResponse);
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
@@ -115,20 +82,17 @@ const controller = {
 
   async put(req, res) {
     try {
-      const response = await axios({
-        method: "PUT",
-        url: `${APIURL}${req.query.url}`,
-        maxBodyLength: Infinity,
-        headers: {
-          "Content-Type": req.headers["content-type"],
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: req.body.data,
-        transformRequest: [(data) => data],
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
+      const decrypted = await decryptResponse(req.body.data);
+
+      const response = await putEncrypted({
+        apiBaseUrl: APIURL,
+        path: `api${req.query.url}`,
+        bearerToken: req.headers.authorization || undefined,
+        tenantHeader:  process.env.API_KEY,
+        body: decrypted,
+      })
+      const encryptedResponse = await encryptRequest(response.data)
+      res.status(200).json(encryptedResponse);
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
@@ -157,68 +121,20 @@ const controller = {
     }
   },
 
-  async upload(req, res) {
-    try {
-      const myHeaders = new Headers();
-      myHeaders.append("channel", req.headers.channel);
-      myHeaders.append("Authorization", req.headers.authorization);
-
-      const formdata = new FormData();
-      formdata.append("file", req.body, "[PROXY]");
-
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: formdata,
-        redirect: "follow",
-        agent: httpsAgent,
-      };
-
-      const response = await fetch(`${APIURL}${req.query.url}`, requestOptions);
-      const data = await response.json();
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(400).json({ error: "Upload failed" });
-    }
-  },
-
-  async delete(req, res) {
-    try {
-      const response = await axios({
-        method: "DELETE",
-        url: `${APIURL}${req.query.url}`,
-        headers: {
-          "Content-Type": req.headers["content-type"],
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: req.body.data,
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
-    } catch (error) {
-      res.status(400).json(error.response?.data);
-    }
-  },
-
   async encdelete(req, res) {
     try {
+      const decrypted = await decryptResponse(req.body.data);
 
-      const path = req.query.url.split("?")[0];
-      const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-
-      const response = await axios({
-        method: "DELETE",
-        url: `${APIURL}${path}?${query}`,
-        headers: {
-          "Content-Type": req.headers["content-type"],
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: req.body.data,
-        httpsAgent,
+      const response = await deleteEncrypted({
+        apiBaseUrl: APIURL,
+        path: `api${req.query.url}`,
+        bearerToken: req.headers.authorization || undefined,
+        tenantHeader: process.env.API_KEY,
+        body: decrypted,
       });
-      res.status(200).json(response.data);
+
+      const encryptedResponse = await encryptRequest(response.data);
+      res.status(200).json(encryptedResponse);
     } catch (error) {
       res.status(400).json(error.response?.data);
     }

@@ -2,13 +2,13 @@
 const CryptoJS = require("crypto-js");
 
 
-const AES_KEY_FOR_DETAILS_REQUEST = "ZpJFemkqxFmkyvEZW/8xSA==";
+const E2E_ENCRYPTION_KEY = process.env.E2E_ENCRYPTION_KEY;
 // const HMAC_AND_AES_KEY_FOR_ENC_REQUEST = "lM97ez5aC0taf/qj5VLCIQ==";
 
 const encryptRequest = async (data) => {
   try {
     const iv = CryptoJS.enc.Utf8.parse("\0".repeat(16));
-    const cryptoKey = CryptoJS.enc.Utf8.parse(AES_KEY_FOR_DETAILS_REQUEST);
+    const cryptoKey = CryptoJS.enc.Utf8.parse(E2E_ENCRYPTION_KEY);
 
     // Convert data to JSON string
     const dataStr = JSON.stringify(data);
@@ -24,6 +24,30 @@ const encryptRequest = async (data) => {
     return encrypted.toString();
   } catch (err) {
     console.error("Encryption error:", err);
+    return null;
+  }
+};
+
+const decryptResponse = async (data) => {
+  try {
+    const iv = CryptoJS.enc.Utf8.parse("\0".repeat(16));
+    const cryptoKey = CryptoJS.enc.Utf8.parse(E2E_ENCRYPTION_KEY);
+
+    // Decode the encrypted data (Base64) and decrypt using AES
+    const decrypted = CryptoJS.AES.decrypt(data, cryptoKey, {
+      iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+
+    const decryptedData = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+    console.log('decryptedData: ', decryptedData)
+
+    return decryptedData;
+
+    // Convert decrypted data to UTF-8 string
+  } catch (err) {
+    console.error("Decryption error:", err);
     return null;
   }
 };
@@ -47,4 +71,4 @@ function buildFullQueryUrl(input) {
 }
 
 
-module.exports = { encryptRequest, buildFullQueryUrl };
+module.exports = { encryptRequest, buildFullQueryUrl, decryptResponse };

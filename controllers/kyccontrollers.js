@@ -2,7 +2,7 @@ const axios = require("axios");
 const fetch = require("node-fetch");
 const https = require("https");
 
-const APIURL = "https://apitest.armmfb.com.ng/IdentityVerifierAPI";
+const APIURL = process.env.KYC_APIURL;
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
