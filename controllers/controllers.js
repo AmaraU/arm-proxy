@@ -10,6 +10,7 @@ const APIURL = process.env.BASE_APIURL;
 
 
 const controller = {
+
   async get(req, res) {
     try {
       const response = await getPlain({
@@ -18,9 +19,14 @@ const controller = {
         bearerToken: req.headers.authorization || undefined,
         tenantHeader: process.env.API_KEY,
       });
+      console.log('get:', response);
       const encryptedResponse = await encryptRequest(response.data);
-      console.log(response);
-      res.status(200).json(encryptedResponse);
+
+      if (response.data.success || response.data.isSuccess) {
+        res.status(200).json(encryptedResponse);
+      } else {
+        res.status(response.status).json(encryptedResponse);
+      }
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
@@ -37,25 +43,14 @@ const controller = {
         tenantHeader: process.env.API_KEY,
         body: decrypted,
       });
+      console.log('encget:', response);
       const encryptedResponse = await encryptRequest(response.data);
-      console.log(response);
-      res.status(200).json(encryptedResponse);
 
-
-      // //check if the encryption part has space
-      // const path = req.query.url.split("?")[0];
-      // const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-
-      // const response = await axios({
-      //   method: "GET",
-      //   url: `${APIURL}${path}?${query}`,
-      //   headers: {
-      //     ContentType: "application/json",
-      //     Authorization: req.headers.authorization || "",
-      //     "X-ARM-Api-Key-P": process.env.API_KEY,
-      //   },
-      //   httpsAgent,
-      // });
+      if (response.data.success || response.data.isSuccess) {
+        res.status(200).json(encryptedResponse);
+      } else {
+        res.status(response.status).json(encryptedResponse);
+      }
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
@@ -72,9 +67,15 @@ const controller = {
         tenantHeader:  process.env.API_KEY,
         body: decrypted,
       })
-      const encryptedResponse = await encryptRequest(response.data)
-      console.log(response.data)
-      res.status(200).json(encryptedResponse);
+      
+      console.log(response);
+      const encryptedResponse = await encryptRequest(response.data);
+
+      if (response.data.success || response.data.isSuccess) {
+        res.status(200).json(encryptedResponse);
+      } else {
+        res.status(response.status).json(encryptedResponse);
+      }
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
@@ -91,8 +92,14 @@ const controller = {
         tenantHeader:  process.env.API_KEY,
         body: decrypted,
       })
-      const encryptedResponse = await encryptRequest(response.data)
-      res.status(200).json(encryptedResponse);
+      console.log(response);
+      const encryptedResponse = await encryptRequest(response.data);
+
+      if (response.data.success) {
+        res.status(200).json(encryptedResponse);
+      } else {
+        res.status(response.status).json(encryptedResponse);
+      }
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
@@ -133,8 +140,14 @@ const controller = {
         body: decrypted,
       });
 
+      console.log(response);
       const encryptedResponse = await encryptRequest(response.data);
-      res.status(200).json(encryptedResponse);
+
+      if (response.data.success) {
+        res.status(200).json(encryptedResponse);
+      } else {
+        res.status(response.status).json(encryptedResponse);
+      }
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
