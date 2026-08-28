@@ -12,6 +12,7 @@ const httpsAgent = new https.Agent({
 const coralcontroller = {
   async get(req, res) {
     try {
+      console.log('HEADER:', req.headers)
       const response = await axios({
         method: "GET",
         url: `${APIURL}${req.query.url}`,
@@ -22,8 +23,10 @@ const coralcontroller = {
         },
         httpsAgent,
       });
+      console.log('coral response: ', response);
       res.status(200).json(response.data);
     } catch (error) {
+      console.log('coral error: ', error);
       res.status(400).json(error.response?.data);
     }
   },
