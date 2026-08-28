@@ -7,7 +7,7 @@ const smilecontrollers = require("../controllers/smilecontrollers");
 const router = Router();
 
 router.get("/api/get", controllers.get);
-router.get("/api/encget", controllers.encget);
+// router.get("/api/encget", controllers.encget);
 router.post("/api/post", controllers.post);
 router.put("/api/put", controllers.put);
 router.put("/api/encput", controllers.encput);
