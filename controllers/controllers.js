@@ -13,7 +13,6 @@ const controller = {
 
   async get(req, res) {
     try {
-      console.log('HEADER:', req.headers)
       const response = await axios({
         method: "GET",
         url: `${APIURL}${req.query.url}`,
@@ -154,25 +153,47 @@ const controller = {
   //   }
   // },
 
+  // async put(req, res) {
+  //   try {
+  //     const decrypted = await decryptResponse(req.body.data);
+
+  //     const response = await putEncrypted({
+  //       apiBaseUrl: APIURL,
+  //       path: `api${req.query.url}`,
+  //       bearerToken: req.headers.authorization || undefined,
+  //       tenantHeader:  process.env.API_KEY,
+  //       body: decrypted,
+  //     })
+  //     console.log(response);
+  //     const encryptedResponse = await encryptRequest(response.data);
+
+  //     if (response.data.success) {
+  //       res.status(200).json(encryptedResponse);
+  //     } else {
+  //       res.status(response.status).json(encryptedResponse);
+  //     }
+  //   } catch (error) {
+  //     res.status(400).json(error.response?.data);
+  //   }
+  // },
+
   async put(req, res) {
     try {
-      const decrypted = await decryptResponse(req.body.data);
-
-      const response = await putEncrypted({
-        apiBaseUrl: APIURL,
-        path: `api${req.query.url}`,
-        bearerToken: req.headers.authorization || undefined,
-        tenantHeader:  process.env.API_KEY,
-        body: decrypted,
-      })
-      console.log(response);
-      const encryptedResponse = await encryptRequest(response.data);
-
-      if (response.data.success) {
-        res.status(200).json(encryptedResponse);
-      } else {
-        res.status(response.status).json(encryptedResponse);
-      }
+      const encryptedData = await encryptRequest(req.body);
+      const response = await axios({
+        method: "PUT",
+        url: `${APIURL}${req.query.url}`,
+        maxBodyLength: Infinity,
+        headers: {
+          "Content-Type": req.headers["content-type"],
+          Authorization: req.headers.authorization || "",
+          "X-ARM-Api-Key-P": process.env.API_KEY,
+        },
+        data: encryptedData,
+        transformRequest: [(data) => data],
+        httpsAgent,
+      });
+      res.status(200).json(response.data);
     } catch (error) {
       res.status(400).json(error.response?.data);
     }
