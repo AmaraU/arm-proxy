@@ -9,65 +9,25 @@ const httpsAgent = new https.Agent({
 });
 
 
+console.log("RUNNING...")
 const coralcontroller = {
   async get(req, res) {
     try {
-      console.log('HEADER:', req.headers)
+      // console.log('\n coral get request: ', req)
       const response = await axios({
         method: "GET",
         url: `${APIURL}${req.query.url}`,
         headers: {
           ContentType: "application/json",
           Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
+          "X-Api-Key": process.env.CORAL_API_KEY,
         },
         httpsAgent,
       });
-      console.log('coral response: ', response);
+      console.log('\ncoral get response: ', response);
       res.status(200).json(response.data);
     } catch (error) {
-      console.log('coral error: ', error);
-      res.status(400).json(error.response?.data);
-    }
-  },
-
-  async encget(req, res) {
-    try {
-      //check if the encryption part has space
-      const path = req.query.url.split("?")[0];
-      const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-
-      const response = await axios({
-        method: "GET",
-        url: `${APIURL}${path}?${query}`,
-        headers: {
-          ContentType: "application/json",
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
-    } catch (error) {
-      res.status(400).json(error.response?.data);
-    }
-  },
-
-  async login(req, res) {
-    try {
-      const response = await axios({
-        method: "POST",
-        url: `${APIURL}${req.query.url}`,
-        headers: {
-          ContentType: req.headers["content-type"],
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: req.body,
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
-    } catch (error) {
-      console.error(error);
+      console.log('\ncoral get error: ', error);
       res.status(400).json(error.response?.data);
     }
   },
@@ -81,108 +41,44 @@ const coralcontroller = {
         headers: {
           "Content-Type": req.headers["content-type"],
           Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
+          "X-Api-Key": process.env.CORAL_API_KEY,
         },
         data: JSON.stringify(req.body),
         transformRequest: [(data) => data],
         httpsAgent,
       });
+      console.log('\ncoral post response: ', response.data);
       res.status(200).json(response.data);
     } catch (error) {
+      console.log('\ncoral post response: ', error.response);
       res.status(400).json(error.response?.data);
     }
   },
 
-  async encpost(req, res) {
-    try {
-      const path = req.query.url.split("?")[0];
-      const query = req.query.url.split("?")[1].replaceAll(" ", "+");
+  // async encpost(req, res) {
+  //   try {
+  //     const path = req.query.url.split("?")[0];
+  //     const query = req.query.url.split("?")[1].replaceAll(" ", "+");
 
-      const encryptedData = await encryptRequest(req.body);
-      const response = await axios({
-        method: "POST",
-        url: `${APIURL}${path}?${query}`,
-        maxBodyLength: Infinity,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: encryptedData,
-        transformRequest: [(data) => data],
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
-    } catch (error) {
-      res.status(400).json(error.response?.data);
-    }
-  },
-
-  async put(req, res) {
-    try {
-      const encryptedData = await encryptRequest(req.body);
-      const response = await axios({
-        method: "PUT",
-        url: `${APIURL}${req.query.url}`,
-        maxBodyLength: Infinity,
-        headers: {
-          "Content-Type": req.headers["content-type"],
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: encryptedData,
-        transformRequest: [(data) => data],
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
-    } catch (error) {
-      res.status(400).json(error.response?.data);
-    }
-  },
-
-  async upload(req, res) {
-    try {
-      const myHeaders = new Headers();
-      myHeaders.append("channel", req.headers.channel);
-      myHeaders.append("Authorization", req.headers.authorization);
-
-      const formdata = new FormData();
-      formdata.append("file", req.body, "[PROXY]");
-
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: formdata,
-        redirect: "follow",
-        agent: httpsAgent,
-      };
-
-      const response = await fetch(`${APIURL}${req.query.url}`, requestOptions);
-      const data = await response.json();
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(400).json({ error: "Upload failed" });
-    }
-  },
-
-  async delete(req, res) {
-    try {
-      const response = await axios({
-        method: "DELETE",
-        url: `${APIURL}${req.query.url}`,
-        headers: {
-          "Content-Type": req.headers["content-type"],
-          Authorization: req.headers.authorization || "",
-          "X-ARM-Api-Key-P": process.env.API_KEY,
-        },
-        data: req.body,
-        httpsAgent,
-      });
-      res.status(200).json(response.data);
-    } catch (error) {
-      res.status(400).json(error.response?.data);
-    }
-  },
+  //     const encryptedData = await encryptRequest(req.body);
+  //     const response = await axios({
+  //       method: "POST",
+  //       url: `${APIURL}${path}?${query}`,
+  //       maxBodyLength: Infinity,
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: req.headers.authorization || "",
+  //         "X-ARM-Api-Key-P": process.env.API_KEY,
+  //       },
+  //       data: encryptedData,
+  //       transformRequest: [(data) => data],
+  //       httpsAgent,
+  //     });
+  //     res.status(200).json(response.data);
+  //   } catch (error) {
+  //     res.status(400).json(error.response?.data);
+  //   }
+  // },
 };
 
 module.exports = coralcontroller;
