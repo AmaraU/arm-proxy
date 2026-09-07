@@ -9,7 +9,6 @@ const httpsAgent = new https.Agent({
 });
 
 
-console.log("RUNNING...")
 const coralcontroller = {
   async get(req, res) {
     try {
@@ -54,31 +53,6 @@ const coralcontroller = {
       res.status(400).json(error.response?.data);
     }
   },
-
-  // async encpost(req, res) {
-  //   try {
-  //     const path = req.query.url.split("?")[0];
-  //     const query = req.query.url.split("?")[1].replaceAll(" ", "+");
-
-  //     const encryptedData = await encryptRequest(req.body);
-  //     const response = await axios({
-  //       method: "POST",
-  //       url: `${APIURL}${path}?${query}`,
-  //       maxBodyLength: Infinity,
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: req.headers.authorization || "",
-  //         "X-ARM-Api-Key-P": process.env.API_KEY,
-  //       },
-  //       data: encryptedData,
-  //       transformRequest: [(data) => data],
-  //       httpsAgent,
-  //     });
-  //     res.status(200).json(response.data);
-  //   } catch (error) {
-  //     res.status(400).json(error.response?.data);
-  //   }
-  // },
 };
 
 module.exports = coralcontroller;
